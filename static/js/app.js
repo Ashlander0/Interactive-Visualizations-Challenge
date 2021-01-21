@@ -26,6 +26,8 @@ d3.json('data/samples.json').then(response => {
 		
 		print(otuIDs);
 
+		// build meta table
+		buildMeta(value);
 		// refresh bar chart
 		Plotly.restyle('bar', 'x', [quantity]);
 		Plotly.restyle('bar', 'y', [otuIDstr]);
@@ -82,11 +84,28 @@ d3.json('data/samples.json').then(response => {
 	};
 
 	// populate meta data
-	function buildMeta() {
+	function buildMeta(value) {
 		//get table
-		var table = d3.select('sample-metadata');
-
+		var table = d3.select('#sample-metadata');
+		var metadata = response.metadata[value];
+		table.html('');
 		
+		print(metadata);
+
+		// meta variables
+		var id = metadata.id;
+		var eth = metadata.ethnicity;
+		var gen = metadata.gender;
+		var age = metadata.age;
+		var loc = metadata.location;
+		var bbt = metadata.bbtype;
+		var wash = metadata.wfreq;
+
+		Object.keys(metadata).forEach(function(item) {
+			print(item)
+			table.append('h5').text(`${item}: ${metadata[item]}`);
+		});
+
 	};
 
 	// fill dropdown options
@@ -101,7 +120,7 @@ d3.json('data/samples.json').then(response => {
 	function init() {
 		buildBar();
 		buildBubble();
-		buildMeta();
+		//buildMeta();
 	};
 
 	init();
