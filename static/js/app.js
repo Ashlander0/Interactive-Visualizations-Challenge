@@ -89,7 +89,7 @@ d3.json('data/samples.json').then(response => {
 		var table = d3.select('#sample-metadata');
 		var metadata = response.metadata[value];
 		table.html('');
-		
+
 		print(metadata);
 
 		// meta variables
@@ -103,7 +103,7 @@ d3.json('data/samples.json').then(response => {
 
 		Object.keys(metadata).forEach(function(item) {
 			print(item)
-			table.append('h5').text(`${item}: ${metadata[item]}`);
+			table.append('h5').text(`${item.toUpperCase()}: ${metadata[item]}`);
 		});
 
 	};
