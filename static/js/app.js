@@ -9,9 +9,9 @@ d3.json('data/samples.json').then(response => {
 	var samples = response.samples;
 	
 	// variables
-	var otuIDs = [];
-	var otuLabels = [];
-	var quantity = [];
+	var otuIDs = [samples[0].otu_ids.slice(0, 10).reverse()];
+	var otuLabels = [samples[0].otu_labels.slice(0, 10)];
+	var quantity = [samples[0].sample_values.slice(0, 10).reverse()];
 
 	function onChange() {
 		// get value selected from dropdown
@@ -25,7 +25,7 @@ d3.json('data/samples.json').then(response => {
 		print(otuIDs);
 
 		Plotly.restyle('bar', 'x', [quantity]);
-		Plotly.restyle('bar', 'y', [(otuIDs.toString())]);
+		Plotly.restyle('bar', 'y', [otuIDs]);
 		Plotly.restyle('bar', 'text', [otuLabels]);
 	};
 
@@ -38,6 +38,9 @@ d3.json('data/samples.json').then(response => {
 			orientation: 'h',
 			text: otuLabels
 		};
+		print(quantity);
+		print(otuIDs);
+
 		var layout = {
 			title: 'Top 10 OTUs',
 			yaxis: {title: 'OTU',
