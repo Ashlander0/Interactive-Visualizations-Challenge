@@ -7,12 +7,14 @@ function print(string) {
 d3.json('data/samples.json').then(response => {
 	print(response);
 	var samples = response.samples;
-	
+	var metadata = response.metadata;
+
 	// variables
 	var otuIDs = [];
 	var otuIDstr = [];
 	var otuLabels = [];
 	var quantity = [];
+	var wash = [];
 
 	function onChange() {
 		// get value selected from dropdown
@@ -23,7 +25,8 @@ d3.json('data/samples.json').then(response => {
 		otuIDstr = otuIDs.map(otu => 'OTU ' + otu);
 		otuLabels = samples[value].otu_labels.slice(0, 10);
 		quantity = samples[value].sample_values.slice(0, 10).reverse();
-		
+		wash = metadata[value].wfreq;
+
 		print(otuIDs);
 
 		// build meta table
@@ -37,6 +40,8 @@ d3.json('data/samples.json').then(response => {
 		Plotly.restyle('bubble', 'y', [quantity]);
 		Plotly.restyle('bubble', 'marker.color', [otuIDs]);
 		Plotly.restyle('bubble', 'marker.size', [quantity]);
+		// refresh gauge
+		Plotly.restyle('gauge', 'value', wash);
 	};
 
 	// bar chart
@@ -87,26 +92,37 @@ d3.json('data/samples.json').then(response => {
 	function buildMeta(value) {
 		//get table
 		var table = d3.select('#sample-metadata');
-		var metadata = response.metadata[value];
 		table.html('');
 
-		print(metadata);
+		print(metadata[value]);
 
-		// meta variables
-		var id = metadata.id;
-		var eth = metadata.ethnicity;
-		var gen = metadata.gender;
-		var age = metadata.age;
-		var loc = metadata.location;
-		var bbt = metadata.bbtype;
-		var wash = metadata.wfreq;
-
-		Object.keys(metadata).forEach(function(item) {
-			print(item)
-			table.append('h5').text(`${item.toUpperCase()}: ${metadata[item]}`);
+		// insert variables to table
+		Object.keys(metadata[value]).forEach(function(item) {
+			table.append('h5').text(`${item.toUpperCase()}: ${metadata[value][item]}`);
 		});
 
 	};
+
+	function buildGauge() {
+		var trace = {
+			x: [0, 1],
+			y: [0, 1],
+			value: 0,
+			title: 'Wash Frequency',
+			type: 'indicator',
+			mode: 'gauge+number',
+			gauge: {
+				axis: {range: [0, 10]}
+			}
+		};
+		var data = [trace];
+
+		var layout = {
+
+		};
+
+		Plotly.plot('gauge', data, layout);
+	}
 
 	// fill dropdown options
 	var dropdown = d3.select('#selDataset');
@@ -120,6 +136,7 @@ d3.json('data/samples.json').then(response => {
 	function init() {
 		buildBar();
 		buildBubble();
+		buildGauge();
 		//buildMeta();
 	};
 
